@@ -1,0 +1,606 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package StudentManagerSwing;
+
+import StudentManagerSwing.ClassFolder.ConnectDB;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Admin
+ */
+public final class frmQuanLyLop extends javax.swing.JFrame {
+
+    /**
+     * Creates new form frmQuanLyMonHoc
+     */
+    Connection cnn;
+    Statement st;
+    PreparedStatement pstm;
+    ConnectDB objcn = new ConnectDB();
+    public frmQuanLyLop() throws ClassNotFoundException, SQLException {
+        initComponents();
+        cnn = objcn.Connect();
+//        getMonHoc();
+        getComboxMaHDT();
+        getComboxMaKhoa();
+        getComboxMaKhoaHoc();
+        
+    }
+    public void setTextNull(){
+        txtMaLop.setText("");
+        txtTenLop.setText("");
+        
+    
+    }
+    public void getComboxMaKhoa(){
+        String sql = "SELECT * FROM dbo.KHOA";
+        try {
+            pstm = cnn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
+        while(rs.next()){
+            JComboxMaKhoa.addItem(rs.getString("MaKhoa"));
+        }
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void getComboxMaHDT(){
+        String sql = "SELECT * FROM dbo.HEDT";
+        try {
+            pstm = cnn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
+        while(rs.next()){
+            JComboxMaHDT.addItem(rs.getString("MaHDT"));
+        }
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void getComboxMaKhoaHoc(){
+        String sql = "SELECT * FROM dbo.KHOAHOC";
+        try {
+            pstm = cnn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
+        while(rs.next()){
+            JComboxMaKhoaHoc.addItem(rs.getString("MaKhoaHoc"));
+        }
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void getLop() throws SQLException {
+        String sql = "Select * from dbo.LOP order by MaLop ASC";
+        st = cnn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        DefaultTableModel tableModel = (DefaultTableModel) tblQuanLyLop.getModel();
+        tableModel.setRowCount(0);
+        String MaLop, TenLop, MaKhoa, MaHDT, MaKhoaHoc;
+        while (rs.next()){
+            MaLop = rs.getString(1);
+            TenLop = rs.getString(2);
+            MaKhoa = rs.getString(3);
+            MaHDT = rs.getString(4);
+            MaKhoaHoc = rs.getString(5);
+            String [] row = {MaLop, TenLop, MaKhoa, MaHDT, MaKhoaHoc};
+            tableModel.addRow(row);
+
+        }
+    }
+    public void searchLop(){
+    String sql = "SELECT * FROM dbo.LOP WHERE (MaLop LIKE ? AND TenLop LIKE ? AND MaKhoa LIKE ? AND MaHDT LIKE ? AND MaKhoaHoc LIKE ?) ";
+        try (PreparedStatement ptsm = cnn.prepareStatement(sql)){
+            ptsm.setString(1, "%" + txtMaLop.getText()+"%"); 
+            ptsm.setString(2,"%" + txtTenLop.getText()+"%");
+            ptsm.setString(3,"%" + (String)JComboxMaKhoa.getSelectedItem()+"%");
+            ptsm.setString(4,"%" + (String)JComboxMaHDT.getSelectedItem()+"%");
+            ptsm.setString(5,"%" + (String)JComboxMaKhoaHoc.getSelectedItem()+"%");
+            
+//        String sql = "SELECT * FROM dbo.MONHOC WHERE (MaMH LIKE ('%" + txtMaMH.getText() +"%') OR TenMH LIKE ('%" + txtTenMH.getText()+"%') OR SoTrinh LIKE ('%"+ txtSoTrinh.getText()+"%')) ";
+//        try {
+//            st = cnn.createStatement();
+            ResultSet rs = ptsm.executeQuery();
+            DefaultTableModel tableModel = (DefaultTableModel) tblQuanLyLop.getModel();
+            tableModel.setRowCount(0);
+            String MaLop, TenLop, MaKhoa, MaHDT, MaKhoaHoc;
+            
+        while (rs.next()){
+            MaLop = rs.getString(1);
+            TenLop = rs.getString(2);
+            MaKhoa = rs.getString(3);
+            MaHDT = rs.getString(4);
+            MaKhoaHoc = rs.getString(5);
+            Object [] row = {MaLop, TenLop, MaKhoa, MaHDT, MaKhoaHoc};
+            tableModel.addRow(row);
+        }        
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblQuanLyLop = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        btnAdd = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        txtMaLop = new javax.swing.JTextField();
+        txtTenLop = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
+        btnExit = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        btnFix1 = new javax.swing.JButton();
+        JComboxMaKhoa = new javax.swing.JComboBox<>();
+        JComboxMaHDT = new javax.swing.JComboBox<>();
+        JComboxMaKhoaHoc = new javax.swing.JComboBox<>();
+        btnDetailMaKhoa = new javax.swing.JButton();
+        btnDetailMaHDT = new javax.swing.JButton();
+        btnDetailMaKhoaHoc = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setBackground(new java.awt.Color(0, 0, 0));
+
+        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("QUẢN  LÝ LỚP");
+
+        tblQuanLyLop.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Mã lớp", "Tên lớp", "Mã khoa", "Mã HĐT", "Mã khóa học"
+            }
+        ));
+        tblQuanLyLop.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblQuanLyLopMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblQuanLyLop);
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("Mã lớp");
+
+        jLabel4.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel4.setText("Tên lớp");
+
+        btnAdd.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnAdd.setText("THÊM");
+        btnAdd.setBorder(null);
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+
+        btnDelete.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnDelete.setText("XÓA");
+        btnDelete.setBorder(null);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
+        txtMaLop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaLopActionPerformed(evt);
+            }
+        });
+
+        btnSearch.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnSearch.setText("TÌM KIẾM");
+        btnSearch.setBorder(null);
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+
+        btnExit.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnExit.setText("THOÁT");
+        btnExit.setBorder(null);
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExitActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel5.setText("Mã khoa");
+
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel6.setText("Mã HĐT");
+
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel7.setText("Mã khóa học");
+
+        btnFix1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnFix1.setText("SỬA");
+        btnFix1.setBorder(null);
+        btnFix1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFix1ActionPerformed(evt);
+            }
+        });
+
+        JComboxMaKhoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JComboxMaKhoaActionPerformed(evt);
+            }
+        });
+
+        JComboxMaHDT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JComboxMaHDTActionPerformed(evt);
+            }
+        });
+
+        JComboxMaKhoaHoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JComboxMaKhoaHocActionPerformed(evt);
+            }
+        });
+
+        btnDetailMaKhoa.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnDetailMaKhoa.setText("Chi tiết");
+        btnDetailMaKhoa.setBorder(null);
+        btnDetailMaKhoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailMaKhoaActionPerformed(evt);
+            }
+        });
+
+        btnDetailMaHDT.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnDetailMaHDT.setText("Chi tiết");
+        btnDetailMaHDT.setBorder(null);
+        btnDetailMaHDT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailMaHDTActionPerformed(evt);
+            }
+        });
+
+        btnDetailMaKhoaHoc.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnDetailMaKhoaHoc.setText("Chi tiết");
+        btnDetailMaKhoaHoc.setBorder(null);
+        btnDetailMaKhoaHoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailMaKhoaHocActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(JComboxMaKhoaHoc, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(208, 208, 208))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(58, 58, 58)
+                                .addComponent(btnFix1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(31, 31, 31)
+                                .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtMaLop, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(jLabel4)
+                                            .addGap(50, 50, 50))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtTenLop, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(JComboxMaHDT, javax.swing.GroupLayout.Alignment.LEADING, 0, 125, Short.MAX_VALUE)
+                                                .addComponent(JComboxMaKhoa, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(btnDetailMaKhoa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(btnDetailMaHDT, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(btnDetailMaKhoaHoc, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(73, 73, 73)
+                                .addComponent(txtMaLop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(txtTenLop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(JComboxMaKhoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDetailMaKhoa, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel6))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnDetailMaHDT, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(JComboxMaHDT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(JComboxMaKhoaHoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDetailMaKhoaHoc, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel7))
+                .addGap(87, 87, 87)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFix1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        String sql = "INSERT INTO dbo.LOP (MaLop,TenLop,MaKhoa, MaHDT, MaKhoaHoc) VALUES (?,?,?,?,?)";
+        
+        try {
+            pstm = cnn.prepareStatement(sql);
+            pstm.setString(1, txtMaLop.getText());
+            pstm.setString(2, txtTenLop.getText());
+            pstm.setString(3, (String)JComboxMaKhoa.getSelectedItem());
+            pstm.setString(4, (String)JComboxMaHDT.getSelectedItem());
+            pstm.setString(5, (String)JComboxMaKhoaHoc.getSelectedItem());
+            pstm.executeUpdate();
+            setTextNull();
+            getLop();
+            getComboxMaHDT();
+            getComboxMaKhoa();
+            getComboxMaKhoaHoc();
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        String sql = "DELETE FROM dbo.LOP WHERE MaLop=?";
+        try {
+            pstm = cnn.prepareStatement(sql);
+            pstm.setString(1, txtMaLop.getText());
+            int i = pstm.executeUpdate();
+            setTextNull();
+            getLop();
+            getComboxMaHDT();
+            getComboxMaKhoa();
+            getComboxMaKhoaHoc();
+            if (i != 0){
+                JOptionPane.showMessageDialog(rootPane, "Xóa thành công", "Thông báo", HEIGHT);
+            }
+            else JOptionPane.showMessageDialog(rootPane, "Xóa thất bại", "Thông báo", HEIGHT);
+        } catch (SQLException ex) {
+            Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void tblQuanLyLopMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQuanLyLopMouseClicked
+        // TODO add your handling code here:
+        int selectRow = tblQuanLyLop.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) tblQuanLyLop.getModel();
+        txtMaLop.setText(model.getValueAt(selectRow, 0).toString());
+        txtTenLop.setText(model.getValueAt(selectRow, 1).toString());
+        JComboxMaKhoa.setSelectedItem(model.getValueAt(selectRow, 2).toString());
+        JComboxMaHDT.setSelectedItem(model.getValueAt(selectRow, 3).toString());
+        JComboxMaKhoaHoc.setSelectedItem(model.getValueAt(selectRow, 4).toString());
+    }//GEN-LAST:event_tblQuanLyLopMouseClicked
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+        searchLop();
+        
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        // TODO add your handling code here:
+        int ck = JOptionPane.showConfirmDialog(rootPane, "Thoát chức năng này?", "Thông báo", JOptionPane.YES_NO_OPTION);
+        if (ck == JOptionPane.YES_OPTION){
+        dispose();
+        }
+    }//GEN-LAST:event_btnExitActionPerformed
+
+    private void btnFix1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFix1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFix1ActionPerformed
+
+    private void btnDetailMaKhoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailMaKhoaActionPerformed
+        // TODO add your handling code here:
+        try { //Phải nằm trong try catch, nếu ko thì sẽ bị lỗi
+            frmQuanLyKhoa frm=new frmQuanLyKhoa();
+            frm.setVisible(true); //Có thể dùng frm.show(); Hiệu quả tương tự
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnDetailMaKhoaActionPerformed
+
+    private void btnDetailMaHDTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailMaHDTActionPerformed
+        // TODO add your handling code here:
+        try { //Phải nằm trong try catch, nếu ko thì sẽ bị lỗi
+            frmQuanLyHDT frm=new frmQuanLyHDT();
+            frm.setVisible(true); //Có thể dùng frm.show(); Hiệu quả tương tự
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnDetailMaHDTActionPerformed
+
+    private void btnDetailMaKhoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailMaKhoaHocActionPerformed
+        // TODO add your handling code here:
+        try { //Phải nằm trong try catch, nếu ko thì sẽ bị lỗi
+            frmQuanLyKhoaHoc frm=new frmQuanLyKhoaHoc();
+            frm.setVisible(true); //Có thể dùng frm.show(); Hiệu quả tương tự
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_btnDetailMaKhoaHocActionPerformed
+
+    private void JComboxMaKhoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JComboxMaKhoaActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_JComboxMaKhoaActionPerformed
+
+    private void txtMaLopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaLopActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaLopActionPerformed
+
+    private void JComboxMaHDTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JComboxMaHDTActionPerformed
+        // TODO add your handling code here:
+      
+    }//GEN-LAST:event_JComboxMaHDTActionPerformed
+
+    private void JComboxMaKhoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JComboxMaKhoaHocActionPerformed
+        // TODO add your handling code here:
+       
+    }//GEN-LAST:event_JComboxMaKhoaHocActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(frmQuanLyLop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(frmQuanLyLop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(frmQuanLyLop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(frmQuanLyLop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new frmQuanLyLop().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(frmQuanLyLop.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> JComboxMaHDT;
+    private javax.swing.JComboBox<String> JComboxMaKhoa;
+    private javax.swing.JComboBox<String> JComboxMaKhoaHoc;
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDetailMaHDT;
+    private javax.swing.JButton btnDetailMaKhoa;
+    private javax.swing.JButton btnDetailMaKhoaHoc;
+    private javax.swing.JButton btnExit;
+    private javax.swing.JButton btnFix1;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblQuanLyLop;
+    private javax.swing.JTextField txtMaLop;
+    private javax.swing.JTextField txtTenLop;
+    // End of variables declaration//GEN-END:variables
+}
